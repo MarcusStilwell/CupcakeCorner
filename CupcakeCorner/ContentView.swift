@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var username = ""
     @State private var email = ""
+    @State private var password = ""
     
     var disableForm: Bool {
         username.count < 5 || email.count < 5
@@ -20,6 +21,7 @@ struct ContentView: View {
             Section {
                 TextField("Username", text: $username)
                 TextField("Email", text: $email)
+                TextField("Password", text: $password)
             }
             
             Section {
