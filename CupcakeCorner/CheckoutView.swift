@@ -10,6 +10,8 @@ import SwiftUI
 struct CheckoutView: View {
     @State private var confirmationMessage = ""
     @State private var showingConfirmation = false
+    @State private var showingErrorAlert = false
+    @State private var errorMessage = ""
     @ObservedObject var order: Order
     var body: some View {
         GeometryReader { geo in
@@ -32,6 +34,9 @@ struct CheckoutView: View {
             .alert(isPresented: $showingConfirmation) {
                 Alert(title: Text("Thank you!"), message: Text(confirmationMessage), dismissButton: .default(Text("OK")))
             }
+            .alert(isPresented: $showingErrorAlert) {
+                Alert(title: Text("Sorry"), message: Text("Unable to place order. Error: \(errorMessage)"), dismissButton: .default(Text("OK")))
+            }
         }
         .navigationTitle("Check out")
         .navigationBarTitleDisplayMode(.inline)
@@ -52,6 +57,8 @@ struct CheckoutView: View {
         URLSession.shared.dataTask(with: request) {data, response, error in
             guard let data = data else{
                 print("No data in response: \(error?.localizedDescription ?? "Unknown error").")
+                errorMessage = error!.localizedDescription
+                showingErrorAlert = true
                 return
             }
             if let decodedOrder = try? JSONDecoder().decode(Order.self, from: data) {
